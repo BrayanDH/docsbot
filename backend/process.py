@@ -4,26 +4,37 @@ from chromadb.config import Settings
 import os
 document_id = 1
 
-db_path = os.path.join(os.path.dirname(__file__), "local_db")
+db_path = "local_db"
+
+
+
+
+def read_processed_files(log_file_path):
+    
+    if not os.path.exists(log_file_path):
+        return []
+    
+    with open(log_file_path, 'r') as f:
+        processed = [line.strip() for line in f]
+    
+    return processed
 
 def process_files(documents):
+
+  
   
     # crear la base de datos si no existe
-  if not os.path.exists(db_path):
+  if os.path.exists(os.path.join(db_path, "chroma.sqlite3")):
+    chroma_client = chromadb.PersistentClient(path=db_path)
+    collection = chroma_client.get_collection(name="test_collection_one")
+    
+  else:
     chroma_client = chromadb.PersistentClient(path=db_path)
     collection = chroma_client.create_collection(name="test_collection_one")
-  else:
-     chroma_client = chromadb.PersistentClient(path=db_path)
-     collection = chroma_client.get_collection(name="test_collection_one")
 
-  # crear el archivo de log si no existe
-  processed_files = 'processed_files.txt'
-  if not os.path.exists(processed_files):
-    file = open(processed_files, 'a')
-
-  # # Leer los archivos ya procesados
-  with open(processed_files) as f:
-    processed = [line.strip() for line in f.readlines()]
+  # leer el archivo de texto con los archivos ya procesados
+  log_file_path = 'processed_files.txt'
+  processed = read_processed_files(log_file_path)
 
 
   for file in documents:
@@ -37,7 +48,7 @@ def process_files(documents):
 
 
       # guardar el nombre del archivo en el archivo de texto
-      with open(processed_files, 'a') as f:
+      with open(log_file_path, 'a') as f:
         f.write(file.filename + '\n')
         f.close()
         print(f"{file.filename} writted...")
