@@ -31,6 +31,23 @@
 <div class="flex justify-center items-center p-4">
 	<div class="m-11 card h-full w-3/4">
 		<div class="p-4 md:p-10">
+			<div class="flex justify-center items-center p-4">
+				<nav class="bg-white-800">
+					<ul class="flex bg-transparent">
+						<li class="mr-1">
+							<a class="text-white-800 px-3 py-2 rounded-md text-sm font-medium text-xl" href="/"
+								>Home</a
+							>
+						</li>
+						<li>
+							<a class="text-white-800 px-1 py-2 rounded-md text-sm font-medium text-xl" href="/bot"
+								>Bot</a
+							>
+						</li>
+					</ul>
+				</nav>
+			</div>
+
 			<h1>🤖 DocsBot</h1>
 			<h3 class="mt-6">Upload your documents:</h3>
 			<form method="POST" on:submit|preventDefault={startProcessing} class="w-full">
