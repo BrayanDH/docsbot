@@ -22,5 +22,20 @@ def consultame(pregunta):
     result = consulta(pregunta)
     return jsonify(result)
 
+
+@app.route('/process', methods=['POST'])
+def process():
+    documents = request.files.getlist('documents')
+    process_files(documents)
+    response = {'success': True}
+    return jsonify(response)
+
+
+@app.route('/query', methods=['GET'])
+def query():
+    query = request.args.get('text')
+    results = query_collection(query)
+    return jsonify(results)
+
 if __name__ == '__main__':
     app.run()
