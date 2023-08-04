@@ -4,9 +4,19 @@ from chromadb.config import Settings
 import os
 document_id = 1
 
-db_path = "local_db"
 
+db_path = "./db"
 
+def process_info(texto, database, titulo, filename, document_id):
+    with chromadb.PersistentClient(path=db_path) as chroma_client:
+        if not chroma_client.collection_exists(name=database):
+            collection = chroma_client.create_collection(name=database)
+        else:
+            collection = chroma_client.get_collection(name=database)
+
+        generate_embeddings(texto, titulo, filename, collection, document_id)
+
+    return True
 
 
 def read_processed_files(log_file_path):
@@ -21,8 +31,6 @@ def read_processed_files(log_file_path):
 
 def process_files(documents):
 
-  
-  
     # crear la base de datos si no existe
   if os.path.exists(os.path.join(db_path, "chroma.sqlite3")):
     chroma_client = chromadb.PersistentClient(path=db_path)
@@ -75,6 +83,8 @@ def generate_embeddings(chunks, document_title, file_name, collection):
         document_id = document_id + 1
 
 
+
+
 def get_title(file):
     match = re.search(r"title:\s+(.+)\s+", file)
     if match:
@@ -100,3 +110,13 @@ def query_collection(query):
     return results
 
 
+def consulta(query):
+    print("mi consulta:::: "+query)
+    chroma_client = chromadb.PersistentClient(path=db_path)
+    collection = chroma_client.get_collection(name="posfile_test")
+    results = collection.query(
+        query_texts=[query],
+        n_results=2,
+    )
+    chroma_client.stop()  # Cierra la conexión después de usarla
+    return results
